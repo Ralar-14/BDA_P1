@@ -41,12 +41,12 @@ def data_collector_kaggle(kaggle_dataset: dict) -> None:
     kaggle_dataset (dict): A dictionary containing the Kaggle dataset information.
     """
 
-    # Excract dataset information
+    # Extract dataset information
     kaggle_id = kaggle_dataset["kaggle_id"]
     dataset_name = kaggle_dataset["dataset_name"]
 
-    # Create a directory for the dataset (to change the dataset name)
-    dataset_folder = os.path.join(LANDING_ZONE_DIR, "dataset_name")
+    # Create a temporary directory for the dataset using the actual dataset name
+    dataset_folder = os.path.join(LANDING_ZONE_DIR, f"temp_{dataset_name}")
     os.makedirs(dataset_folder, exist_ok=True)
 
     try:  
@@ -59,8 +59,10 @@ def data_collector_kaggle(kaggle_dataset: dict) -> None:
         )
 
         # Search the CSV downloaded file 
+        csv_found = False
         for filename in os.listdir(dataset_folder):
             if filename.endswith(".csv"):
+                csv_found = True
                 # Rename the file to the dataset name
                 new_filename = f"{dataset_name}.csv"
                 old_path = os.path.join(dataset_folder, filename)
@@ -70,8 +72,10 @@ def data_collector_kaggle(kaggle_dataset: dict) -> None:
                 # Move the file to the landing zone
                 final_path = os.path.join(LANDING_ZONE_DIR, new_filename)
                 shutil.move(new_path, final_path)
-            else:
-                log(f"File downloaded is not a CSV file. Skipping.")
+                log(f"File '{filename}' renamed to '{new_filename}' and moved to landing zone.")
+            
+        if not csv_found:
+            log(f"No CSV file found in the downloaded dataset. Check the contents of the download.")
             
         # Remove the dataset folder after processing
         shutil.rmtree(dataset_folder)
