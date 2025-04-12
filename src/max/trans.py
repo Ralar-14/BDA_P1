@@ -28,7 +28,9 @@ def transformerPipeline():
     # 1. Load and Prepare the Data
     # ---------------------------
     # Load the parquet file into a pandas DataFrame (update the file path as necessary).
-    df = pd.read_parquet("path/to/your/datafile.parquet")
+    df = pd.read_parquet("C:/Users/maxmg/Documents/GitHub/BDA_P1/src/max/data/exploitation_zone/explicit_prediction")
+
+    print(df.columns)
     
     # Select only the two columns of interest ("lyrics" and "explicit") and rename "explicit" to "label".
     df = df[["lyrics", "explicit"]].rename(columns={"explicit": "label"})

@@ -5,6 +5,12 @@ from datetime import datetime
 import re
 
 def prepare_data(df, country, start_date, end_date):
+    # Convertir las fechas de entrada a objetos datetime
+    if isinstance(start_date, str):
+        start_date = pd.to_datetime(start_date).date()
+    if isinstance(end_date, str):
+        end_date = pd.to_datetime(end_date).date()
+        
     # Filtrar y limpiar datos
     df = df[
         (df['country'] == country) &
@@ -13,11 +19,11 @@ def prepare_data(df, country, start_date, end_date):
     ].copy()
     
     # Limpieza de caracteres especiales
-    df['name'] = df['name'].apply(lambda x: re.sub(r'[^\w\s\-()]', '', x) if isinstance(x, str) else '')
-    df['artists'] = df['artists'].apply(lambda x: re.sub(r'[^\w\s\-()]', '', x) if isinstance(x, str) else '')
+    df['track_name'] = df['track_name'].apply(lambda x: re.sub(r'[^\w\s\-()]', '', x) if isinstance(x, str) else '')
+    df['artist_name'] = df['artist_name'].apply(lambda x: re.sub(r'[^\w\s\-()]', '', x) if isinstance(x, str) else '')
     
     # Crear identificador único y valores de ranking invertido
-    df['song_id'] = df['name'] + ' - ' + df['artists']
+    df['song_id'] = df['track_name'] + ' - ' + df['artist_name']
     df['rank_value'] = 16 - df['daily_rank']
     
     # Crear estructura completa de posiciones
@@ -255,7 +261,7 @@ def create_bar_race(df, country, output_file=None):
     return output_file
 
 def visualizationPipeline(country, start_date, end_date):
-    df = pd.read_parquet("C:/Users/maxmg/Documents/GitHub/BDA_P1/src/max/data/landing_zone/top-spotify-songs-by-country.parquet")
+    df = pd.read_parquet("C:/Users/maxmg/Documents/GitHub/BDA_P1/src/max/data/exploitation_zone/data_visualization")
     df = prepare_data(df, country, start_date, end_date)
     create_bar_race(df, country)
 
@@ -263,8 +269,8 @@ def visualizationPipeline(country, start_date, end_date):
 if __name__ == '__main__':
     # Definir país, fecha de inicio y fecha de fin
     country = 'ES'
-    start_date = '2024-01-01'
-    end_date = '2024-02-02'
+    start_date = '2025-01-01'
+    end_date = '2025-04-04'
     
     # Ejecutar la visualización
     visualizationPipeline(country, start_date, end_date)
